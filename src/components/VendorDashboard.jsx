@@ -213,7 +213,7 @@ export default function VendorDashboard() {
     navigate('/vendor', { replace: true })
   }
 
-  const totalRooms = rooms.reduce((sum, room) => sum + room.room_count, 0)
+  const totalRooms = rooms.reduce((sum, room) => sum + room.room_count, 0)\n  const availableRooms = rooms.reduce((sum, room) => sum + room.available_count, 0)\n  const occupiedRooms = Math.max(totalRooms - availableRooms, 0)\n  const occupancy = totalRooms ? Math.round((occupiedRooms / totalRooms) * 100) : 0
   const averageRate = rooms.length
     ? Math.round(rooms.reduce((sum, room) => sum + room.price, 0) / rooms.length)
     : 0
@@ -223,7 +223,7 @@ export default function VendorDashboard() {
       <div className="mx-auto max-w-7xl">
         <header className="flex flex-col justify-between gap-5 border-b-2 border-night pb-6 lg:flex-row lg:items-end">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.18em] text-vermillion">Property desk / 01</p>
+            <p className="text-sm font-medium uppercase tracking-[0.18em] text-vermillion">THREADBARE Local / Vendor Console</p>
             <h1 className="mt-1 font-display text-4xl text-night sm:text-5xl">{profile?.business_name || 'Your hotel'}</h1>
             <p className="mt-2 text-ink/60">{profile?.city || 'Set your property city'} · Rooms, rates, and availability for your guests.</p>
           </div>
@@ -237,7 +237,7 @@ export default function VendorDashboard() {
           <div className="bg-white p-5"><p className="text-xs uppercase tracking-wider text-ink/55">Room types</p><p className="mt-2 font-display text-4xl text-night">{rooms.length}</p><p className="mt-1 text-sm text-ink/55">Across your property</p></div>
           <div className="bg-white p-5"><p className="text-xs uppercase tracking-wider text-ink/55">Total inventory</p><p className="mt-2 font-display text-4xl text-night">{totalRooms}</p><p className="mt-1 text-sm text-ink/55">Rooms to sell</p></div>
           <div className="bg-white p-5"><p className="text-xs uppercase tracking-wider text-ink/55">Average nightly rate</p><p className="mt-2 font-display text-4xl text-night">Rs {averageRate.toLocaleString('en-IN')}</p><p className="mt-1 text-sm text-ink/55">Before taxes</p></div>
-          <div className="bg-night p-5 text-paper"><p className="text-xs uppercase tracking-wider text-paper/60">Today's occupancy</p><p className="mt-2 font-display text-4xl text-marigold">68%</p><p className="mt-1 text-sm text-paper/60">18 of 26 rooms occupied</p></div>
+          <div className="bg-night p-5 text-paper"><p className="text-xs uppercase tracking-wider text-paper/60">Current occupancy</p><p className="mt-2 font-display text-4xl text-marigold">{occupancy}%</p><p className="mt-1 text-sm text-paper/60">{occupiedRooms} of {totalRooms} rooms occupied</p></div>
         </div>
 
         {(message || error) && <p role={error ? 'alert' : 'status'} className={`mt-5 border px-4 py-3 text-sm ${error ? 'border-vermillion/40 bg-vermillion/5 text-vermillion' : 'border-teal/40 bg-teal/5 text-teal'}`}>{error || message}</p>}
