@@ -1,6 +1,13 @@
 .env
+.env.local
+.env.*.local
 .venv/
 __pycache__/
 *.py[cod]
 node_modules/
 dist/
+*.db
+*.sqlite
+*.sqlite3
+.DS_Store
+.vscode/
