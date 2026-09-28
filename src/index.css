@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-paper text-ink font-body;
+}
+
+/* Ledger-style hairline divider, used instead of card shadows */
+.ledger-rule {
+  border-top: 1px solid rgba(20, 33, 61, 0.15);
+}
+
+.ledger-rule-strong {
+  border-top: 2px solid #14213D;
+}
+
+/* Passport-stamp style rating badge */
+.stamp {
+  border: 2px solid currentColor;
+  border-radius: 9999px;
+  position: relative;
+}
+
+.stamp::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border: 1px dashed currentColor;
+  border-radius: 9999px;
+  opacity: 0.5;
+}
+
+/* Visible keyboard focus, kept consistent across the app */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #F4A100;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
