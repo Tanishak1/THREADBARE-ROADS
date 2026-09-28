@@ -1,133 +1,147 @@
-# Bharat Atlas — SIH26204 Tourism Platform
+# THREADBARE ROADS — SIH 26204 Tourism Platform
 
-A complete React prototype for the "Student Innovation" problem statement:
-a solution to boost tourism, hotels, and travel. Built as a full set of
-connected pages sharing one login and one booking history.
+> **One platform to discover India, plan smarter trips, connect with local businesses, and keep travel services together.**
 
-## Pages
+THREADBARE ROADS is a Smart India Hackathon prototype for **SIH Problem Statement 26204** in the tourism, hospitality and travel domain. It combines destination discovery, AI-assisted itinerary planning, accommodation, local transport, traveller accounts and a vendor ecosystem in one experience.
 
-- **Explore** (`/`, `/city/:cityId`) — states → cities → history, why it's
-  famous, attractions, local food, and nearest restaurants with ratings.
-  Includes a search box and state filter. Public, no login required.
-- **Stay** (`/stay`) — hotel search & booking. Requires login.
-- **Move** (`/move`) — local transport search & booking. Requires login.
-- **My bookings** (`/bookings`) — everything booked through Stay and Move,
-  saved per account. Requires login.
-- **Login** (`/login`) / **Sign up** (`/signup`) — shared auth for Stay,
-  Move and My bookings. After logging in, you're sent back to whichever
-  page you came from.
-- **About** (`/about`) — plain-language description of the project for
-  judges/reviewers.
-- **404** — any unmatched route shows a branded not-found page instead of
-  a blank screen.
+## Why this project
 
-## Run it
+Travellers often switch between separate apps for destination research, itinerary planning, stays and local transport, while small local vendors struggle to become visible in the same digital journey. THREADBARE ROADS is designed as a unified layer between the traveller and the local tourism ecosystem.
+
+## Current prototype
+
+| Module | What works |
+| --- | --- |
+| Explore India | State/city discovery, history, attractions, food and local recommendations |
+| AI Trip Planner | Destination, duration, budget, accommodation, transport and interest-based itinerary request |
+| Stay | Hotel discovery/booking prototype behind traveller authentication |
+| Move | Local transport discovery/booking prototype behind traveller authentication |
+| Traveller Account | Sign up, login and protected routes |
+| My Bookings | Unified traveller booking history |
+| Vendor Portal | Vendor registration/login, JWT authentication and listing management |
+| Map Experience | Google Maps integration for itinerary/location presentation |
+| Backend | FastAPI APIs, PostgreSQL/pgvector-ready retrieval and structured AI itinerary generation |
+
+## SIH value proposition
+
+- **Unified tourism journey:** discovery → planning → stay → movement → bookings.
+- **Local-first ecosystem:** vendors can register and publish rooms, food, products and experiences.
+- **AI-assisted planning:** the backend supports retrieval-grounded, structured day-wise itineraries.
+- **Scalable architecture:** React frontend and FastAPI backend are separated and can be deployed independently.
+- **India-focused experience:** city stories, culture, food and local mobility are first-class parts of the trip.
+
+## Architecture
+
+```text
+Traveller / Vendor
+       |
+       v
+React + Vite + Tailwind
+       |
+       | REST / JSON
+       v
+FastAPI Backend
+  |        |         |
+  |        |         +--> JWT Auth + Vendor Listings
+  |        +------------> Groq LLM (structured itinerary)
+  +---------------------> PostgreSQL + pgvector / local tourism context
+
+Optional integrations:
+Google Maps API • Bhashini-compatible transcription endpoint
+```
+
+More detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+
+## Tech stack
+
+**Frontend:** React 18, Vite, React Router, Tailwind CSS, Google Maps React API  
+**Backend:** Python, FastAPI, SQLAlchemy, Pydantic  
+**AI/RAG:** LangChain, Groq, Hugging Face embeddings, pgvector  
+**Security:** JWT bearer authentication, password hashing  
+**Database:** PostgreSQL + pgvector for the complete retrieval setup.
+
+## Routes
+
+`/` Explore • `/city/:cityId` City details • `/plan` AI planner • `/stay` Stay • `/move` Transport • `/bookings` Bookings • `/login` & `/signup` Traveller auth • `/vendor` Vendor login • `/vendor/register` Vendor onboarding • `/vendor/dashboard` Vendor dashboard • `/about` Project story
+
+## Quick start — frontend
+
+Requirements: Node.js 18+.
 
 ```bash
+git clone https://github.com/Tanishak1/THREADBARE-ROADS.git
+cd THREADBARE-ROADS
 npm install
 npm run dev
 ```
 
-Then open the URL Vite prints (usually `http://localhost:5173`).
-
-To build for production:
+Production check:
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Run the itinerary API
+Copy `.env.example` to `.env` and set `VITE_GOOGLE_MAPS_API_KEY` if maps are required.
 
-The FastAPI service lives in `backend/` and expects PostgreSQL with the
-`vector` extension enabled. From the project root:
+## Quick start — backend
+
+Requirements: Python 3.10+ and PostgreSQL with pgvector for the complete itinerary retrieval flow.
 
 ```bash
 python -m venv .venv
-.venv\\Scripts\\activate
+# Windows
+.venv\Scripts\activate
+# macOS/Linux: source .venv/bin/activate
 pip install -r backend/requirements.txt
-copy backend/.env.example .env
 uvicorn backend.main:app --reload --port 8000
 ```
 
-Set `DATABASE_URL` and `GROQ_API_KEY` in `.env`. The service creates the
-`local_places` table on startup; populate it with monument and vendor records
-whose `embedding` values are 384-dimensional vectors generated with the same
-embedding model configured by `EMBEDDING_MODEL`. The React dev server proxies
-`/api` requests to this service.
+Create a root `.env` using `backend/.env.example`. Health check: `GET /health`. During development Vite proxies `/api` to `http://localhost:8000`.
 
-Vendor authentication uses `POST /api/vendor/register` and
-`POST /api/vendor/login`. Set a long random `JWT_SECRET_KEY` in `.env`; never
-commit the real secret. Both endpoints accept `phone_number`, and registration
-also accepts `password`, `business_name`, and `business_type`. Successful
-responses include a bearer `access_token` and vendor profile.
+## Environment
 
-Authenticated vendors can create listings with `POST /api/vendor/listings` by
-sending `Authorization: Bearer <access_token>`. The JSON body accepts `title`,
-`listing_type` (`room`, `local_product`, `food`, or `experience`),
-`description`, `price`, `location`, and optional `is_active`. The saved response
-includes the authenticated `vendor_id`.
+Never commit real secrets.
 
-The itinerary endpoint accepts:
+| Variable | Purpose |
+| --- | --- |
+| `VITE_GOOGLE_MAPS_API_KEY` | Frontend Google Maps |
+| `DATABASE_URL` | Backend database connection |
+| `GROQ_API_KEY` | AI itinerary generation |
+| `JWT_SECRET_KEY` | Authentication token signing |
+| `FRONTEND_ORIGIN` | Allowed frontend origin for CORS |
+| `EMBEDDING_MODEL` | Retrieval embedding model |
+| `BHASHINI_TRANSCRIBE_URL` / `BHASHINI_API_KEY` | Optional transcription integration |
 
-```json
-{
-  "destination": "Jaipur",
-  "days": 3,
-  "budget": "moderate",
-  "accommodation": "budget_hotel",
-  "transport": "local_auto_rickshaw",
-  "interests": ["History", "Food"]
-}
-```
+## SIH judge demo
 
-## Where to plug in your real systems
+Use [SIH_DEMO.md](SIH_DEMO.md) for the rehearsed 3-minute flow. It deliberately separates the working prototype from integrations requiring external credentials/data, so the team can demonstrate confidently without overclaiming.
 
-Everything is isolated behind a few functions so you can swap mock logic
-for real API calls without touching the UI:
+## API highlights
 
-1. **City/state content** — `src/data/india.js`. The functions at the
-   bottom (`getStates`, `getCitiesByState`, `getCity`, `getAllCities`) are
-   what every page calls. Replace their bodies with `fetch()` calls to
-   your backend, and add a real reviews source (e.g. Google Places API)
-   for the restaurant ratings.
+Vendor registration/login and authenticated listings, traveller authentication, itinerary generation, and `GET /health`. FastAPI interactive documentation is available at `/docs` while the backend is running.
 
-2. **Hotel app connection** — `src/pages/HotelBooking.jsx`, functions
-   `searchHotels()` and `bookHotel()` at the top of the file. Point these
-   at your hotel app's real endpoints.
+## Deployment
 
-3. **Travel/transport app connection** — `src/pages/Transport.jsx`,
-   functions `searchTransport()` and `bookTransport()`. Same pattern.
+The repository includes `vercel.json` for Vite SPA routing. Deploy the frontend on Vercel and FastAPI separately on a Python-capable service. Set `FRONTEND_ORIGIN` to the deployed frontend origin and configure the production API routing/base URL.
 
-4. **Auth** — `src/context/AuthContext.jsx`, the `login()` and `signup()`
-   functions. Replace the fake user object with a real call to your auth
-   service, and store the returned JWT instead of a plain object. Every
-   page reads login state via `useAuth()`, so this is the only file to
-   change.
+GitHub Actions runs a frontend production build on pushes and pull requests to catch broken builds before the demo.
 
-5. **Bookings history** — `src/data/bookings.js` currently persists to
-   the browser's `localStorage`, keyed by the logged-in user's email.
-   Replace `addBooking()`/`getBookingsForUser()` with real API calls once
-   your hotel and travel apps can write to a shared bookings table.
+## Before submission
 
-## Design notes
+- [ ] `npm run build` passes.
+- [ ] Backend `/health` returns `{"status":"ok"}`.
+- [ ] Required environment variables are configured.
+- [ ] Traveller login → protected route flow is tested.
+- [ ] AI planner is tested with configured backend/data.
+- [ ] Vendor registration/login/listing flow is tested.
+- [ ] One complete judge demo path is rehearsed.
+- [ ] README, PPT, live URL and repository use **THREADBARE ROADS** consistently.
 
-Colour and type choices are set in `tailwind.config.js` (deep indigo +
-marigold + vermillion, Fraunces for display type, Work Sans for body/UI).
-The rating badges are styled like passport stamps (`RatingStamp.jsx`) and
-sections are separated with hairline "ledger" rules instead of card
-shadows — a deliberate travel-journal look rather than a generic SaaS
-template. Navigation collapses to a mobile menu below the `md` breakpoint.
+## Project status
 
-## Suggested next steps for your SIH submission
+**SIH prototype — active development.** Some content and booking flows are prototype/mock-backed by design. External services and production data sources can be swapped behind the existing interfaces.
 
-- Swap mock data for a real database (MongoDB/Postgres) once your team
-  decides on a schema — the shapes in `india.js` and `bookings.js` are a
-  good starting schema.
-- Add category filters on Explore (heritage, food, adventure, hill
-  station).
-- Add photos once you have a content/image pipeline — city cards and the
-  city detail hero are laid out to take an image without restructuring.
-- Consider server-side rendering or static generation for the Explore
-  pages for better SEO, since tourists will search Google directly for
-  "things to do in [city]".
+---
+
+Built for Smart India Hackathon • **THREADBARE ROADS**
