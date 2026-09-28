@@ -20,7 +20,7 @@ const transportOptions = [
   { value: 'walking', label: 'Walking' },
 ]
 
-const interestOptions = ['History', 'Food', 'Handlooms']
+const interestOptions = ['History', 'Food', 'Handlooms', 'Heritage', 'Nature', 'Local Markets']
 
 export default function AIPlannerForm() {
   const [destination, setDestination] = useState('')
@@ -78,7 +78,7 @@ export default function AIPlannerForm() {
 
   return (
     <section className="bg-paper text-ink">
-      <div className="max-w-2xl mx-auto px-6 py-10">
+      <div className="max-w-5xl mx-auto px-6 py-12">
         <div className="mb-8">
           <p className="text-vermillion text-sm font-medium mb-2">Plan your journey</p>
           <h2 className="font-display text-3xl text-night">Build an itinerary with AI</h2>
@@ -176,7 +176,7 @@ export default function AIPlannerForm() {
 
           <fieldset>
             <legend className="block text-sm text-ink/70 mb-2">Interests</legend>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {interestOptions.map((interest) => {
                 const selected = interests.includes(interest)
                 return (
