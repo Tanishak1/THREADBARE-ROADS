@@ -213,7 +213,10 @@ export default function VendorDashboard() {
     navigate('/vendor', { replace: true })
   }
 
-  const totalRooms = rooms.reduce((sum, room) => sum + room.room_count, 0)\n  const availableRooms = rooms.reduce((sum, room) => sum + room.available_count, 0)\n  const occupiedRooms = Math.max(totalRooms - availableRooms, 0)\n  const occupancy = totalRooms ? Math.round((occupiedRooms / totalRooms) * 100) : 0
+  const totalRooms = rooms.reduce((sum, room) => sum + room.room_count, 0)
+  const availableRooms = rooms.reduce((sum, room) => sum + room.available_count, 0)
+  const occupiedRooms = Math.max(totalRooms - availableRooms, 0)
+  const occupancy = totalRooms ? Math.round((occupiedRooms / totalRooms) * 100) : 0
   const averageRate = rooms.length
     ? Math.round(rooms.reduce((sum, room) => sum + room.price, 0) / rooms.length)
     : 0
